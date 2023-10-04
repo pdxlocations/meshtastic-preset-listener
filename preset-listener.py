@@ -32,7 +32,8 @@ ourNode = interface.getNode('^local')
 def onReceive(packet, interface):
     if ignoreFrom not in str(packet):
         print ('\n>>>>>>>>>>>>>>>>>>> PACKET RECEIVED <<<<<<<<<<<<<<<<<<<<<<<\n')
-        if showPackets: print(packet)
+        if showPackets:
+            print(packet)
         print('')
         receivedPackets.append(keys_list[ourNode.localConfig.lora.modem_preset])
 
@@ -42,12 +43,9 @@ else:
     presetsToScan = len(keys_list)
 totalTime = round(((listenSeconds + rebootSeconds) * scanCycles * presetsToScan)/60,2)
 
-
 print (f'\n\nStarting ....  This scan will take {totalTime} minutes\n')
 
-
 for cycle in range(scanCycles):
-
     for preset in preset_dict:
         if skipLongFast and preset == "LONG_FAST": continue
         ourNode = interface.getNode('^local')
