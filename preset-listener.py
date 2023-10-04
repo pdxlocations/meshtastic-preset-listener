@@ -4,15 +4,16 @@ import meshtastic.serial_interface
 from pubsub import pub
 
 # CONFIGURATION
-rebootSeconds = 3    # time to wait for reboots
+ignoreFrom = '\'from\': 1439168412' # !!! SET YOUR NODE NUMBER HERE - packets from our node don't count
+rebootSeconds = 10     # time to wait for reboots
 listenSeconds = 5    # time to listen on each preset
-scanCycles = 2        # number of cycles through the presets
-testing = True        # if true, don't send lora settings to radio (no reboots)
-showPackets = True
+scanCycles = 2         # number of cycles through the presets
+showPackets = True     # if true, display the received packets as they arrive
+skipLongFast = False    # if true, skip the LongFast preset
+testing = False        # if true, don't send lora settings to radio (no reboots)
 
-ignoreFrom = '\'from\': 1439168412' # packets from our node don't count
 
-# PRESET NAME : CHANNEL, FREQUENCY
+# PRESET NAME : CHANNEL, FREQUENCY (CH and FREQ are currently only for informational purposes)
 preset_dict = {'LONG_FAST'      :   ['20','906.875'],
                'LONG_SLOW'      :   ['27','905.3125'],
                'VERY_LONG_SLOW' :   ['49','905.03125'],
@@ -23,7 +24,6 @@ preset_dict = {'LONG_FAST'      :   ['20','906.875'],
                'LONG_MODERATE'  :   ['6','902.6875']}
 
 keys_list = list(preset_dict.keys())
-
 receivedPackets = []
 
 interface = meshtastic.serial_interface.SerialInterface()
@@ -36,13 +36,20 @@ def onReceive(packet, interface):
         print('')
         receivedPackets.append(keys_list[ourNode.localConfig.lora.modem_preset])
 
+if skipLongFast:
+    presetsToScan = len(keys_list)-1
+else:
+    presetsToScan = len(keys_list)
+totalTime = round(((listenSeconds + rebootSeconds) * scanCycles * presetsToScan)/60,2)
 
-print (f'\n\nStarting ....  This scan will take {round(((listenSeconds + rebootSeconds) * scanCycles * len(keys_list))/60,2)} minutes\n')
+
+print (f'\n\nStarting ....  This scan will take {totalTime} minutes\n')
 
 
 for cycle in range(scanCycles):
 
     for preset in preset_dict:
+        if preset == "LONG_FAST": continue
         ourNode = interface.getNode('^local')
         print(f'Changing to preset: {preset}')
         ourNode.localConfig.lora.modem_preset = preset
@@ -63,16 +70,11 @@ for cycle in range(scanCycles):
         pub.subscribe(onReceive, 'meshtastic.receive')
         time.sleep(listenSeconds) 
 
-
-
-
-
+# Print results
 print ('')
 print ('-------------------------------------------------------------')
 print ('Packets received on presets:\n')
 for result in receivedPackets:
     print (result)
-
 print ('')
-
 interface.close()
