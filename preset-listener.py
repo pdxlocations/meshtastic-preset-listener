@@ -4,12 +4,12 @@ import meshtastic.serial_interface
 from pubsub import pub
 
 # CONFIGURATION
-ignoreFrom = '\'from\': 1439168412' # !!! SET YOUR NODE NUMBER HERE - packets from our node don't count
+ignoreFrom = '\'from\': 1342589710' # !!! SET YOUR NODE NUMBER HERE - packets from our node don't count
 rebootSeconds = 10     # time to wait for reboots
 listenSeconds = 900    # time to listen on each preset
-scanCycles = 2         # number of cycles through the presets
+scanCycles = 1         # number of cycles through the presets
 showPackets = True     # if true, display the received packets as they arrive
-skipLongFast = False   # if true, skip the LongFast preset
+skipLongFast = True    # if true, skip the LongFast preset
 testing = False        # if true, don't send lora settings to radio (no reboots)
 
 
@@ -45,9 +45,10 @@ totalTime = round(((listenSeconds + rebootSeconds) * scanCycles * presetsToScan)
 
 print (f'\n\nStarting ....  This scan will take {totalTime} minutes\n')
 
-for cycle in range(scanCycles):
+for _ in range(scanCycles):
     for preset in preset_dict:
-        if skipLongFast and preset == "LONG_FAST": continue
+        if skipLongFast and preset == "LONG_FAST":
+            continue
         ourNode = interface.getNode('^local')
         print(f'Changing to preset: {preset}')
         ourNode.localConfig.lora.modem_preset = preset
@@ -69,7 +70,10 @@ for cycle in range(scanCycles):
 # Print results
 print ('')
 print ('-------------------------------------------------------------')
-print ('Packets received on presets:\n')
+if len(receivedPackets) > 0:
+    print ('Packets received on presets:\n')
+else:
+    print ('No packets heard\n')
 for result in receivedPackets:
     print (result)
 print ('')
