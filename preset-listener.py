@@ -27,6 +27,8 @@ keys_list = list(preset_dict.keys())
 receivedPackets = []
 
 interface = meshtastic.serial_interface.SerialInterface()
+# or something like this
+# interface = meshtastic.serial_interface.SerialInterface(devPath='/dev/cu.usbmodem53230050571')
 ourNode = interface.getNode('^local')
 
 def onReceive(packet, interface):
@@ -61,6 +63,8 @@ for _ in range(scanCycles):
         time.sleep(rebootSeconds)
 
         interface = meshtastic.serial_interface.SerialInterface()
+        # or something like this
+        # interface = meshtastic.serial_interface.SerialInterface(devPath='/dev/cu.usbmodem53230050571')
 
         print(f'Listening >>> {preset} CH{preset_dict[preset][0]} {preset_dict[preset][1]}MHz for {listenSeconds} seconds\n')
 
