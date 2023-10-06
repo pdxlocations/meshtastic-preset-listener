@@ -4,7 +4,7 @@ import meshtastic.serial_interface
 from pubsub import pub
 
 # CONFIGURATION
-ignoreFrom = '\'from\': 1342589710' # !!! SET YOUR NODE NUMBER HERE - packets from our node don't count
+ignoreFrom = '\'from\': 1342589710' # <<<<<<<< !!! SET YOUR NODE NUMBER HERE - packets from our node don't count
 rebootSeconds = 10     # time to wait for reboots
 listenSeconds = 900    # time to listen on each preset
 scanCycles = 1         # number of cycles through the presets
