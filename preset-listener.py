@@ -8,7 +8,7 @@ listenSeconds = 900    # time to listen on each preset
 scanCycles = 1         # number of cycles through the presets
 showPackets = True     # if true, display the received packets as they arrive
 skipLongFast = True    # if true, skip the LongFast preset
-testing = True        # if true, don't send lora settings to radio (no reboots)
+testing = False        # if true, don't send lora settings to radio (no reboots)
 
 
 # PRESET NAME : CHANNEL, FREQUENCY (CH and FREQ are currently only for informational purposes and are based on US values)
