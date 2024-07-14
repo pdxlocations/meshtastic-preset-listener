@@ -1,19 +1,17 @@
 import time
-import meshtastic
 import meshtastic.serial_interface
 from pubsub import pub
 
 # CONFIGURATION
-ignoreFrom = '\'from\': 1342589710' # <<<<<<<< !!! SET YOUR NODE NUMBER HERE - packets from our node don't count
 rebootSeconds = 10     # time to wait for reboots
 listenSeconds = 900    # time to listen on each preset
 scanCycles = 1         # number of cycles through the presets
 showPackets = True     # if true, display the received packets as they arrive
 skipLongFast = True    # if true, skip the LongFast preset
-testing = False        # if true, don't send lora settings to radio (no reboots)
+testing = True        # if true, don't send lora settings to radio (no reboots)
 
 
-# PRESET NAME : CHANNEL, FREQUENCY (CH and FREQ are currently only for informational purposes)
+# PRESET NAME : CHANNEL, FREQUENCY (CH and FREQ are currently only for informational purposes and are based on US values)
 preset_dict = {'LONG_FAST'      :   ['20','906.875'],
                'LONG_SLOW'      :   ['27','905.3125'],
                'VERY_LONG_SLOW' :   ['49','905.03125'],
@@ -30,6 +28,7 @@ interface = meshtastic.serial_interface.SerialInterface()
 # or something like this
 # interface = meshtastic.serial_interface.SerialInterface(devPath='/dev/cu.usbmodem53230050571')
 ourNode = interface.getNode('^local')
+ignoreFrom = '\'from\': ' +  str(ourNode.nodeNum)
 
 def onReceive(packet, interface):
     if ignoreFrom not in str(packet):
